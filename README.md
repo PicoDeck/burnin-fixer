@@ -20,12 +20,14 @@ and B's default keys.
 From the **App Store** on the device (firmware 0.7.0 or later), or copy the
 files listed in `files.txt` to `/apps/burnin_fixer/` on the SD card. Its
 `app.json` sets `"dirname": "burnin_fixer"`, so the store installs it to the
-same folder.
+same folder. Both routes need PicoDeck firmware 0.7.0 or later: the app
+calls `picocalc.gamepad.getNavPressed()`, which older firmware lacks.
 
 ## Development
 
 `make e2e` runs the tests in PicoDeck's simulator. It needs a PicoDeck
-checkout with the simulator built (`make simulator` there), at
+checkout of PicoDeck 0.7.0 or later (its `develop` branch until 0.7.0
+ships) with the simulator built (`make simulator` there), at
 `~/Projects/PicoDeck/picodeck` or `$PICODECK_ROOT`.
 
 `make zip` builds the release zip from `files.txt`, as CI does. A tag

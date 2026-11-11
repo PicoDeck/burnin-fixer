@@ -1,3 +1,4 @@
+# Needs PicoDeck 0.7.0 or later (develop until it ships); older ones time out.
 PICODECK_ROOT ?= $(HOME)/Projects/PicoDeck/picodeck
 export PICODECK_ROOT
 VERSION := $(shell python3 -c 'import json; print(json.load(open("app.json"))["version"])')
