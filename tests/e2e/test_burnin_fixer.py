@@ -76,6 +76,27 @@ def test_burnin_fixer_a_held_skips_once(simulator):
     _exited(sim)
 
 
+def test_burnin_fixer_launcher_a_still_held_does_not_skip(simulator):
+    """The launcher opens the app on A and A is still held: that press must
+    not skip the first pattern, releasing it does nothing, a fresh press skips."""
+    sim = simulator
+    _launch(sim)
+    sim.keypress("esc")
+    _exited(sim)
+    time.sleep(1.0)                      # back in the launcher, app selected
+    seq = sim.get_log_buffer(tail=1).get("next_seq", 0)
+    sim.pad("a")                         # open the app, and keep holding
+    sim.wait_for_log(r"^MODE:Solid Colors", timeout=10, since_seq=seq)
+    time.sleep(0.8)
+    sim.pad("none")
+    time.sleep(0.3)
+    assert all(m.startswith("MODE:Solid Colors") for m in _modes(sim, seq)), _modes(sim, seq)
+    sim.pad("a", 100)
+    sim.wait_for_log(r"^MODE:Gradients", timeout=5, since_seq=seq)
+    sim.keypress("esc")
+    _exited(sim)
+
+
 def test_burnin_fixer_f4_skips_and_f5_quits(simulator):
     """F4 and F5 are A and B's default keys."""
     sim = simulator
