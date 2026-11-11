@@ -15,6 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The tests run in PicoDeck's simulator: `make e2e` locally (README).
+
       - name: Package
         run: |
           rm -f picodeck-burnin-fixer-*.zip

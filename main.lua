@@ -6,6 +6,7 @@ local pc    = picocalc
 local disp  = pc.display
 local input = pc.input
 local sys   = pc.sys
+local gp    = pc.gamepad
 
 local W = disp.getWidth()    -- 320
 local H = disp.getHeight()   -- 320
@@ -47,8 +48,10 @@ local function draw_status(elapsed_ms, duration_ms, mode_name, detail, total_sta
     if detail ~= "" then left = left .. " - " .. detail end
     disp.drawText(2, sy + 4, left, WHITE, BLACK)
 
-    -- Right label: total elapsed + hint
-    local right = fmt_time(sys.getTimeMs() - total_start_ms) .. "  Esc:Exit"
+    -- Right label: total elapsed + hints. A is named by its key, read each
+    -- frame (Settings > Controls can rebind it while the app runs).
+    local right = fmt_time(sys.getTimeMs() - total_start_ms) .. "  " ..
+                  (gp.getLabel(gp.PAD_A) or "?") .. ":Next  Esc:Exit"
     -- 6 px per char (built-in 6x8 font), right-align with 2px margin
     local rx = W - #right * 6 - 2
     disp.drawText(rx, sy + 4, right, GRAY, BLACK)
@@ -273,15 +276,17 @@ modes[cur].init()
 
 while true do
     input.update()
-    local pressed = input.getButtonsPressed()
+    -- The gamepad: keys, rebound keys or a controller. Enter reads as A and
+    -- Esc as B.
+    local nav = gp.getNavPressed()
 
-    -- Esc: quit
-    if pressed & input.BTN_ESC ~= 0 then
+    -- B or Esc: quit
+    if nav & gp.PAD_B ~= 0 then
         return
     end
 
-    -- Enter: skip to next mode immediately
-    if pressed & input.BTN_ENTER ~= 0 then
+    -- A or Enter: skip to next mode immediately
+    if nav & gp.PAD_A ~= 0 then
         cur = cur % #modes + 1
         mode_start = sys.getTimeMs()
         modes[cur].init()
